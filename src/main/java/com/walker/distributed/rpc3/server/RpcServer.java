@@ -46,9 +46,11 @@ public class RpcServer {
                             String methodName = input.readUTF();
                             Class<?>[] parameterTypes = (Class<?>[]) input.readObject();
                             Object[] arguments = (Object[]) input.readObject();
-                            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
                             Method method = service.getClass().getMethod(methodName, parameterTypes);
+                            //反射调用
                             Object result = method.invoke(service, arguments);
+                            //回写结果
+                            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
                             output.writeObject(result);
                         } catch (IOException e) {
                             e.printStackTrace();
