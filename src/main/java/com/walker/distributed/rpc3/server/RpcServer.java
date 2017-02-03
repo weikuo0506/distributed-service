@@ -1,5 +1,6 @@
 package com.walker.distributed.rpc3.server;
 
+import com.walker.distributed.CloseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,7 @@ public class RpcServer {
                 new Thread(new Runnable() {
                     public void run() {
                         ObjectInputStream input = null;
+                        ObjectOutputStream output = null;
                         try {
                             input = new ObjectInputStream(socket.getInputStream());
                             String methodName = input.readUTF();
@@ -50,29 +52,25 @@ public class RpcServer {
                             //反射调用
                             Object result = method.invoke(service, arguments);
                             //回写结果
-                            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+                            output = new ObjectOutputStream(socket.getOutputStream());
                             output.writeObject(result);
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        } catch (InvocationTargetException e) {
-                            e.printStackTrace();
-                        } catch (ClassNotFoundException e) {
-                            e.printStackTrace();
+                        }finally {
+                            CloseUtil.close(input,output,socket);
                         }
                     }
                 }).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            CloseUtil.close(server);
         }
     }
 
     public void registry(Object service) {
-        LOG.info("service Regsitry !");
+        LOG.info("service Regsitry ,serviceName = {}",service.getClass().getName());
         this.service = service;
     }
 

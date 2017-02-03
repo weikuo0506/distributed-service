@@ -1,4 +1,4 @@
-package com.walker.distributed.rpc3;
+package com.walker.distributed.rpc3.server;
 
 import com.walker.distributed.rpc3.api.HeyService;
 import com.walker.distributed.rpc3.server.RpcServer;

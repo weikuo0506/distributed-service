@@ -1,4 +1,4 @@
-package com.walker.distributed.rpc2;
+package com.walker.distributed;
 
 import java.io.Closeable;
 import java.io.IOException;
